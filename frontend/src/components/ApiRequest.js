@@ -6,7 +6,7 @@ const ApiRequest = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const backendUrl = process.env.REACT_APP_BACKEND_URL; // Accessing environment variable
+    const backendUrl = `${process.env.REACT_APP_BACKEND_URL}api/data`; // Accessing environment variable
 
     fetch(backendUrl)
       .then((response) => response.json())

@@ -22,6 +22,7 @@ jobs:
     - name: Build and push frontend Docker image
       run: |
         cd frontend
+        echo "REACT_APP_BACKEND_URL=${{ secrets.REACT_APP_BACKEND_URL }}" >> .env
         docker build -t my-frontend .
 
     - name: Build and push backend Docker image
