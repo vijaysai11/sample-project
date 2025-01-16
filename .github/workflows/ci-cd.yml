@@ -29,10 +29,14 @@ jobs:
         cd backend
         docker build -t my-backend .
 
+    - name: Set up SSH key
+      run: |
+        echo "${{ secrets.EC2_KEY }}" > ec2_key.pem
+        chmod 600 ec2_key.pem
+
     - name: Deploy to EC2 (Docker Compose)
       env:
         EC2_HOST: ${{ secrets.EC2_HOST }}
         EC2_USER: ${{ secrets.EC2_USER }}
         EC2_KEY: ${{ secrets.EC2_KEY }}
-      run: |
-        ssh -i $EC2_KEY $EC2_USER@$EC2_HOST "docker-compose -f /home/ec2-user/sample-project/docker-compose.yml up -d"
+      run: ssh -i ec2_key.pem ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "docker-compose -f /home/ec2-user/sample-project/docker-compose.yml up -d"
