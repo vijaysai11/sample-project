@@ -35,4 +35,4 @@ jobs:
         EC2_USER: ${{ secrets.EC2_USER }}
         EC2_KEY: ${{ secrets.EC2_KEY }}
       run: |
-        ssh -i $EC2_KEY $EC2_USER@$EC2_HOST "docker-compose -f /path/to/docker-compose.yml up -d"
+        ssh -i $EC2_KEY $EC2_USER@$EC2_HOST "docker-compose -f /home/ec2-user/sample-project/docker-compose.yml up -d"
