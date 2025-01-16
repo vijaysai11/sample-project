@@ -22,12 +22,13 @@ jobs:
     - name: Build and push frontend Docker image
       run: |
         cd frontend
-        docker build --no-cache -t my-frontend .
+        docker build --no-cache -t sample-project_frontend .
 
     - name: Build and push backend Docker image
       run: |
         cd backend
-        docker build --no-cache -t my-backend .
+        docker build --no-cache -t sample-project_backend .
+
 
     - name: Set up SSH key
       run: |

@@ -7,6 +7,7 @@ services:
       - "80:80"
     depends_on:
       - backend
+    image: sample-project_frontend:latest # Optional: You can add a tag to ensure you're using the correct image
 
   backend:
     build: ./backend
@@ -15,3 +16,4 @@ services:
     environment:
       - FLASK_APP=app
       - FLASK_ENV=development
+    image: sample-project_backend:latest # Optional: You can add a tag to ensure you're using the correct image
