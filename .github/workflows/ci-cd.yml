@@ -9,26 +9,12 @@ on:
       - main
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
-
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v1
-
-    - name: Build and push frontend Docker image
-      run: |
-        cd frontend
-        docker build --no-cache -t sample-project_frontend .
-
-    - name: Build and push backend Docker image
-      run: |
-        cd backend
-        docker build --no-cache -t sample-project_backend .
-
+      uses: actions/checkout@v3
 
     - name: Set up SSH key
       run: |
@@ -40,6 +26,62 @@ jobs:
       run: |
         ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
 
-    - name: Deploy to EC2 (Docker Compose)
+    - name: Deploy to EC2 (Build and Deploy)
       run: |
-        ssh -i ~/.ssh/ec2_key.pem ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "docker-compose -f /home/ec2-user/sample-project/docker-compose.yml down -v && docker-compose -f /home/ec2-user/sample-project/docker-compose.yml up -d --build"
+        ssh -i ~/.ssh/ec2_key.pem ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+        # Navigate to the project directory
+        cd /home/ec2-user/sample-project
+        
+        # Pull the latest changes from the main branch
+        git pull origin main
+        
+        # Stop existing containers, build new images, and start containers
+        docker-compose down -v
+        docker-compose up -d --build
+        EOF
+
+# name: CI/CD Pipeline
+
+# on:
+#   push:
+#     branches:
+#       - main
+#   pull_request:
+#     branches:
+#       - main
+
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#     - name: Checkout repository
+#       uses: actions/checkout@v2
+
+#     - name: Set up Docker Buildx
+#       uses: docker/setup-buildx-action@v1
+
+#     - name: Build and push frontend Docker image
+#       run: |
+#         cd frontend
+#         docker build --no-cache -t sample-project_frontend .
+
+#     - name: Build and push backend Docker image
+#       run: |
+#         cd backend
+#         docker build --no-cache -t sample-project_backend .
+
+
+#     - name: Set up SSH key
+#       run: |
+#         mkdir -p ~/.ssh
+#         echo "${{ secrets.EC2_KEY }}" > ~/.ssh/ec2_key.pem
+#         chmod 600 ~/.ssh/ec2_key.pem
+
+#     - name: Add EC2 host to known_hosts
+#       run: |
+#         ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+
+#     - name: Deploy to EC2 (Docker Compose)
+#       run: |
+#         ssh -i ~/.ssh/ec2_key.pem ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "docker-compose -f /home/ec2-user/sample-project/docker-compose.yml down -v && docker-compose -f /home/ec2-user/sample-project/docker-compose.yml up -d --build"
