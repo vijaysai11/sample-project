@@ -4,7 +4,7 @@ import ApiRequest from "./components/ApiRequest";
 function App() {
   return (
     <div className="App">
-      <h1>React Js and Python Application hashTag</h1>
+      <h1>React Js and Python Application</h1>
       <ApiRequest />
     </div>
   );
