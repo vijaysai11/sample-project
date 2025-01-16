@@ -22,13 +22,12 @@ jobs:
     - name: Build and push frontend Docker image
       run: |
         cd frontend
-        echo "REACT_APP_BACKEND_URL=${{ secrets.REACT_APP_BACKEND_URL }}" >> .env
-        docker build -t my-frontend .
+        docker build --no-cache -t my-frontend .
 
     - name: Build and push backend Docker image
       run: |
         cd backend
-        docker build -t my-backend .
+        docker build --no-cache -t my-backend .
 
     - name: Set up SSH key
       run: |
@@ -42,4 +41,4 @@ jobs:
 
     - name: Deploy to EC2 (Docker Compose)
       run: |
-        ssh -i ~/.ssh/ec2_key.pem ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "docker-compose -f /home/ec2-user/sample-project/docker-compose.yml down && docker-compose -f /home/ec2-user/sample-project/docker-compose.yml up -d"
+        ssh -i ~/.ssh/ec2_key.pem ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "docker-compose -f /home/ec2-user/sample-project/docker-compose.yml down -v && docker-compose -f /home/ec2-user/sample-project/docker-compose.yml up -d"
